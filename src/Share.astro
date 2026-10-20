@@ -11,7 +11,7 @@
  * See README for every prop.
  */
 import { icons } from './icons';
-import { shareLinks, DEFAULT_NETWORKS } from './links';
+import { shareLinks, DEFAULT_NETWORKS, ARIA_LABELS } from './links';
 import type { ShareProps } from './types';
 
 type Props = ShareProps;
@@ -51,7 +51,7 @@ const opensTab = (id: string) => id !== 'email' && id !== 'sms';
 			);
 			if (link.id === 'native') return (
 				<li data-ap-share-native-item hidden>
-					<button type="button" class={item} data-ap-share-action="native" data-url={link.url} data-title={title} data-text={text} aria-label={labels ? undefined : link.label}>
+					<button type="button" class={item} data-ap-share-action="native" data-url={link.url} data-title={title} data-text={text} aria-label={labels ? undefined : ARIA_LABELS.native}>
 						{svg(icon.body, icon.kind)}{labels && <span>{link.label}</span>}
 					</button>
 				</li>
@@ -65,7 +65,7 @@ const opensTab = (id: string) => id !== 'email' && id !== 'sms';
 			);
 			return (
 				<li data-ap-share-link-item>
-					<a href={link.href} class={item} aria-label={labels ? undefined : `Share on ${link.label}`} target={opensTab(link.id) ? '_blank' : undefined} rel={opensTab(link.id) ? 'noopener noreferrer' : undefined}>
+					<a href={link.href} class={item} aria-label={labels ? undefined : ARIA_LABELS[link.id]} target={opensTab(link.id) ? '_blank' : undefined} rel={opensTab(link.id) ? 'noopener noreferrer' : undefined}>
 						{svg(icon.body, icon.kind)}{labels && <span>{link.label}</span>}
 					</a>
 				</li>

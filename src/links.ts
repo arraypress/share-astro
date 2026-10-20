@@ -100,6 +100,15 @@ export const LABELS: Record<Network, string> = {
 	copy: 'Copy link',
 };
 
+/** Accessible names for icon-only buttons: "Share on X", but "Share by email". */
+export const ARIA_LABELS: Record<Network, string> = {
+	...(Object.fromEntries(Object.entries(LABELS).map(([id, label]) => [id, `Share on ${label}`])) as Record<Network, string>),
+	native: 'Share…',
+	email: 'Share by email',
+	sms: 'Share by text message',
+	copy: 'Copy link',
+};
+
 const enc = encodeURIComponent;
 
 /** Build a query string, dropping empty values. */

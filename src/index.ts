@@ -16,7 +16,7 @@
  * emails or anything else: `@arraypress/share-astro/links`.
  */
 export { default as Share } from './Share.astro';
-export { shareLinks, shareHref, taggedUrl, NETWORKS, DEFAULT_NETWORKS, LABELS } from './links';
+export { shareLinks, shareHref, taggedUrl, NETWORKS, DEFAULT_NETWORKS, LABELS, ARIA_LABELS } from './links';
 export type { Network, ShareInput, ShareLink } from './links';
 export type { ShareProps } from './types';
 export { icons } from './icons';

@@ -23,9 +23,11 @@ describe('<Share>', () => {
 		expect(html.match(/target="_blank"/g)).toHaveLength(2);
 	});
 
-	it('does not open email or sms in a new tab', async () => {
+	it('does not open email or sms in a new tab, and names them naturally', async () => {
 		const html = await render({ networks: ['email', 'sms'] });
 		expect(html).not.toContain('target="_blank"');
+		expect(html).toContain('aria-label="Share by email"');
+		expect(html).toContain('aria-label="Share by text message"');
 	});
 
 	it('renders native and copy hidden until the script reveals them', async () => {
