@@ -1,0 +1,70 @@
+{
+  "name": "@arraypress/share-astro",
+  "version": "1.0.0",
+  "description": "Share buttons for Astro: the device share sheet (iMessage, WhatsApp, AirDrop…), X, Bluesky, Threads, LinkedIn, WhatsApp and more, plus copy link. Inline SVG, zero dependencies, no third-party requests, CSP-safe.",
+  "type": "module",
+  "files": [
+    "src/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./Share.astro": "./src/Share.astro",
+    "./links": {
+      "types": "./src/links.ts",
+      "default": "./src/links.ts"
+    },
+    "./icons": {
+      "types": "./src/icons.ts",
+      "default": "./src/icons.ts"
+    },
+    "./types": {
+      "types": "./src/types.ts",
+      "default": "./src/types.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "astro",
+    "astro-component",
+    "share",
+    "share-buttons",
+    "social-share",
+    "web-share-api",
+    "navigator-share",
+    "bluesky",
+    "whatsapp",
+    "withastro"
+  ],
+  "author": "ArrayPress",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arraypress/share-astro.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "astro": "^6.0.0 || ^7.0.0"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "astro": "^7.3.5",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}

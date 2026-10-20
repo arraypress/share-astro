@@ -1,0 +1,127 @@
+---
+/**
+ * <Share> — share buttons: the device's share sheet, the networks people use
+ * and copy link. Inline SVG icons, no requests, no tracking pixels, CSP-safe
+ * (no inline script or style).
+ *
+ *   <Share title={post.title} />
+ *   <Share networks={['native', 'whatsapp', 'bluesky', 'copy']} labels />
+ *
+ * The URL defaults to the page's canonical URL (Astro.site + pathname).
+ * See README for every prop.
+ */
+import { icons } from './icons';
+import { shareLinks, DEFAULT_NETWORKS } from './links';
+import type { ShareProps } from './types';
+
+type Props = ShareProps;
+
+const {
+	url: urlProp,
+	title,
+	text,
+	media,
+	via,
+	hashtags,
+	mastodon,
+	utm,
+	networks = DEFAULT_NETWORKS,
+	native = 'add',
+	labels = false,
+	size = 20,
+	label = 'Share',
+	copiedLabel = 'Link copied',
+	unstyled = false,
+	itemClass,
+	class: className,
+} = Astro.props;
+
+const url = urlProp ?? new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+const links = shareLinks({ url, title, text, media, via, hashtags, mastodon, utm }, native === false ? networks.filter((n) => n !== 'native') : networks);
+const item = [unstyled ? '' : 'ap-share-item', labels && !unstyled ? 'ap-share-item--label' : '', itemClass].filter(Boolean).join(' ');
+const opensTab = (id: string) => id !== 'email' && id !== 'sms';
+---
+
+<div class:list={['ap-share', className]} data-ap-share data-ap-share-url={url} data-ap-share-native={native || undefined} data-ap-share-copied={copiedLabel}>
+	<ul class="ap-share-list" aria-label={label}>
+		{links.map((link) => {
+			const icon = icons[link.id];
+			const svg = (body: string, kind: 'fill' | 'stroke', extra?: string) => (
+				<svg class:list={['ap-share-icon', extra]} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" fill={kind === 'fill' ? 'currentColor' : 'none'} stroke={kind === 'stroke' ? 'currentColor' : undefined} stroke-width={kind === 'stroke' ? 2 : undefined} stroke-linecap={kind === 'stroke' ? 'round' : undefined} stroke-linejoin={kind === 'stroke' ? 'round' : undefined} set:html={body} />
+			);
+			if (link.id === 'native') return (
+				<li data-ap-share-native-item hidden>
+					<button type="button" class={item} data-ap-share-action="native" data-url={link.url} data-title={title} data-text={text} aria-label={labels ? undefined : link.label}>
+						{svg(icon.body, icon.kind)}{labels && <span>{link.label}</span>}
+					</button>
+				</li>
+			);
+			if (link.id === 'copy') return (
+				<li data-ap-share-copy-item hidden>
+					<button type="button" class={item} data-ap-share-action="copy" data-url={link.url} aria-label={labels ? undefined : link.label}>
+						{svg(icon.body, icon.kind, 'ap-share-idle')}{svg(icons.copied.body, 'stroke', 'ap-share-done')}{labels && <span>{link.label}</span>}
+					</button>
+				</li>
+			);
+			return (
+				<li data-ap-share-link-item>
+					<a href={link.href} class={item} aria-label={labels ? undefined : `Share on ${link.label}`} target={opensTab(link.id) ? '_blank' : undefined} rel={opensTab(link.id) ? 'noopener noreferrer' : undefined}>
+						{svg(icon.body, icon.kind)}{labels && <span>{link.label}</span>}
+					</a>
+				</li>
+			);
+		})}
+	</ul>
+	<span class="ap-share-status" role="status" data-ap-share-status></span>
+</div>
+
+<script>
+	import { initShare } from './client';
+	initShare();
+</script>
+
+<style>
+	/* Everything sits in :where() — zero specificity — so a theme's own
+	   classes (itemClass, or any selector) win without !important. */
+	:where(.ap-share-list) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--ap-share-gap, 0.25rem);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	:where(.ap-share-item) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		min-width: var(--ap-share-size, 2.5rem);
+		height: var(--ap-share-size, 2.5rem);
+		border: 0;
+		border-radius: var(--ap-share-radius, 999px);
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		text-decoration: none;
+		cursor: pointer;
+		transition: background-color 0.15s;
+	}
+	:where(.ap-share-item--label) { padding-inline: 0.875rem; }
+	:where(.ap-share-item:hover) { background: var(--ap-share-hover, color-mix(in srgb, currentColor 10%, transparent)); }
+	:where(.ap-share-item:focus-visible) { outline: 2px solid currentColor; outline-offset: 2px; }
+	/* Copy: the check replaces the link icon for two seconds. */
+	:where(.ap-share-done) { display: none; }
+	:where([data-copied] .ap-share-idle) { display: none; }
+	:where([data-copied] .ap-share-done) { display: block; }
+	:where(.ap-share-status) {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+	:where(.ap-share) { position: relative; }
+</style>
